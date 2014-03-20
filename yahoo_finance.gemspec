@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.version       = YahooFinance::VERSION
   spec.authors       = ["Takis Mercouris"]
   spec.email         = ["tm@polymechanus.com"]
-  spec.description   = %q{TODO: Write a gem description}
-  spec.summary       = %q{TODO: Write a gem summary}
+  spec.description   = %q{Library to parse various pages in yahoo finance}
+  spec.summary       = %q{Library to parse various pages in yahoo finance}
   spec.homepage      = ""
   spec.license       = "MIT"
 
@@ -20,4 +20,6 @@ Gem::Specification.new do |spec|
 
   spec.add_development_dependency "bundler", "~> 1.3"
   spec.add_development_dependency "rake"
+  spec.add_development_dependency "rspec", "~> 2.14.1"
+  spec.add_dependency "nokogiri", "~> 1.6.1"
 end
