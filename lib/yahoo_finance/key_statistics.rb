@@ -72,8 +72,8 @@ module KeyStatistics
       return nil if !@page_keys
       
       matchstr = "/^#{AVL_KEY_STATS[key_stat][0]}/"
-      @page_keys.each_with_index do |key.to_s, i|
-        if key.match(matchstr)
+      @page_keys.each_with_index do |key, i|
+        if key.text.match(matchstr)
           return @page_values[i]
         end
       end
