@@ -71,9 +71,9 @@ module KeyStatistics
     def value_for key_stat
       return nil if !@page_keys
       
-      matchstr = "/^#{AVL_KEY_STATS[key_stat][0]}/"
+      matchstr = "#{AVL_KEY_STATS[key_stat][0]}"
       @page_keys.each_with_index do |key, i|
-        if key.text.match(matchstr)
+        if key.text.match(/^"#{AVL_KEY_STATS[key_stat][0]}"/)
           return @page_values[i]
         end
       end
