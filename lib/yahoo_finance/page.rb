@@ -1,14 +1,14 @@
 require "yahoo_finance/version"
 require 'nokogiri'
 require 'open-uri'
-require 'yahoo_finance/key_statistics'
 
 module YahooFinance
   class Page
     @symbols = []
-    @key_stats_fields = {
+    @available_fields = {
       :PE_trailing => "Trailing P/E (ttm, intraday):"
     }
+    @fields = []
     
     def initialize(symbols)
       @symbols = symbols
@@ -18,25 +18,14 @@ module YahooFinance
       return @symbols
     end
     
+    def fields
+      return @fields
+    end
+    
     def add_symbol(aSymbol)
       aSymbol = aSymbol.strip || ""
       @symbols << aSymbol if (aSymbol != "" && (@symbols.include?(aSymbol) == false))
     end
     
-
-    include KeyStatistics
-    def key_stats
-      return nil if @symbols.size == 0
-      results = []
-      @symbols.each do |symbol|
-        results.push(KeyStatistics::fetch(symbol))
-      end
-      results
-    end
-    
-    def key_stats_available
-      return KeyStatistics::key_stats_available;
-    end
-
   end
 end
