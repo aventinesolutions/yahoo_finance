@@ -4,7 +4,7 @@ require 'nokogiri'
 module KeyStatistics
   class StatsPage
     AVL_KEY_STATS = {
-      :Market_Cap => ['Market Cap \(intraday\)', :float],
+      :Market_Cap => ['Market Cap ', :float],
       :Enterprise_Value => ['Enterprise Value \(', :float],
       :Trailing_PE => ['Trailing P\/E \(ttm, intraday\)', :float],
       :Forward_PE => ['Forward P\/E (', :float],
