@@ -54,7 +54,7 @@ module KeyStatistics
     end
       
     def fetch
-      url = "http://finance.yahoo.com/q/ks?s=#{symbol}"
+      url = "http://finance.yahoo.com/q/ks?s=#{@symbol}"
       doc = Nokogiri::HTML(open(url))
       # puts "DATA IS: #{data}"
       @page_keys = doc.xpath('//td[@class="yfnc_tablehead1"]')
