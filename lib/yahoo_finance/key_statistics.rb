@@ -1,8 +1,8 @@
 require 'open-uri'
 require 'nokogiri'
 
-module KeyStatistics
-  class StatsPage
+module YahooFinance
+  module KeyStatistics
     AVL_KEY_STATS = {
       :Market_Cap => ['Market Cap ', :float],
       :Enterprise_Value => ['Enterprise Value \(', :float],
@@ -45,43 +45,46 @@ module KeyStatistics
       # :Next_Ex_Dividend_Date,
       # :Next_Dividend_Date
     }
-    @page_keys = []
-    @page_values = []
-    @symbol
-    
-    def initialize symbol
-      @symbol = symbol
-    end
-      
-    def fetch
-      url = "http://finance.yahoo.com/q/ks?s=#{@symbol}"
-      doc = Nokogiri::HTML(open(url))
-      # puts "DATA IS: #{data}"
-      @page_keys = doc.xpath('//td[@class="yfnc_tablehead1"]')
-      @page_values = doc.xpath('//td[@class="yfnc_tabledata1"]')
-    end
-    
-    def all_stats
-      ret = {}
-      mcap = value_for :Market_Cap
-      ret[:Market_Cap] = mcap
-      ret
-    end
-    
-    def value_for key_stat
-      return nil if !@page_keys
-      
-      matchstr = "#{AVL_KEY_STATS[key_stat][0]}"
-      @page_keys.each_with_index do |key, i|
-        if key.text.match(/^"#{AVL_KEY_STATS[key_stat][0]}"/)
-          return @page_values[i]
-        end
-      end
-      return nil
-    end
-  
-    def key_stats_available
+    def KeyStatistics.key_stats_available
       return AVL_KEY_STATS.keys;
+    end
+
+    class StatsPage
+      @page_keys = []
+      @page_values = []
+      @symbol
+    
+      def initialize symbol
+        @symbol = symbol
+      end
+      
+      def fetch
+        url = "http://finance.yahoo.com/q/ks?s=#{@symbol}"
+        doc = Nokogiri::HTML(open(url))
+        # puts "DATA IS: #{data}"
+        @page_keys = doc.xpath('//td[@class="yfnc_tablehead1"]')
+        @page_values = doc.xpath('//td[@class="yfnc_tabledata1"]')
+      end
+    
+      def all_stats
+        ret = {}
+        mcap = value_for :Market_Cap
+        ret[:Market_Cap] = mcap
+        ret
+      end
+    
+      def value_for key_stat
+        return nil if !@page_keys
+      
+        matchstr = "#{AVL_KEY_STATS[key_stat][0]}"
+        @page_keys.each_with_index do |key, i|
+          if key.text.match(/^"#{AVL_KEY_STATS[key_stat][0]}"/)
+            return @page_values[i]
+          end
+        end
+        return nil
+      end
+  
     end
   end
 end
