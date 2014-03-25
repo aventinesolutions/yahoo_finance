@@ -11,16 +11,13 @@ module YahooFinance
     :YAHOO_STOCK_FIELDS => YahooStock::Quote.new(:stock_symbols => ['AAPL']).valid_parameters,
     :KEY_STATISTICS => []
   }
-  class Page
+  class Stock
     @@available_fields = [] | AVL_FIELDS[:YAHOO_STOCK_FIELDS]
     @symbols = []
     @fields = []
     
-    def initialize(symbols)
+    def initialize(symbols, fields = nil)
       @symbols = symbols
-      if !@@available_fields then
-        @@available_fields = [] | AVL_FIELDS[:YAHOO_STOCK_FIELDS]
-      end
     end
     
     def symbols
@@ -39,5 +36,13 @@ module YahooFinance
       aSymbol = aSymbol.strip || ""
       @symbols << aSymbol if (aSymbol != "" && (@symbols.include?(aSymbol) == false))
     end
+    
+    def add_field(aField)
+      if @@available_fields.include? aField
+        @fields << aField
+      end
+    end
+    
+    
   end
 end
