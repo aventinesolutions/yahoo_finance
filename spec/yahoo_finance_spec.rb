@@ -27,6 +27,9 @@ describe YahooFinance do
       dt.day.should == 3
       dt.year.should == 2009
     end
+    it "should recognize that a string like 'hello 1, 2000' is a string and neither a number or a date" do
+      YahooFinance.parse_yahoo_field("hello 1, 2000") == "hello 1, 2000"
+    end
   end
 end
 
