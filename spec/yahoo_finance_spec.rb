@@ -28,7 +28,9 @@ describe YahooFinance do
       dt.year.should == 2009
     end
     it "should recognize that a string like 'hello 1, 2000' is a string and neither a number or a date" do
-      YahooFinance.parse_yahoo_field("hello 1, 2000") == "hello 1, 2000"
+      str = YahooFinance.parse_yahoo_field("hello 1, 2000")
+      str.class.name.should == "String"
+      str.should == "hello 1, 2000"
     end
   end
 end
@@ -49,6 +51,15 @@ describe YahooFinance::Stock do
       @stock.symbols.size == 3
       # puts "#{@page.symbols.to_s}"
       @stock.symbols.uniq.sort.should == @tsymbols
+    end
+  end
+  
+  describe "execution - fetching yahoo_stock outputs" do
+    it "should return value for a field such as :p_e_ratio, and it should be of type float" do
+      @stock.add_field(:p_e_ratio)
+      results = @stock.fetch
+      puts "GOT RESULTS: #{results[0][:p_e_ratio]}"
+      (results[0][:p_e_ratio]).class.name.should == "Float"
     end
   end
 end

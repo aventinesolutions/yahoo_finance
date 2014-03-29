@@ -40,7 +40,6 @@ module YahooFinance
         num /= 100
         # puts "NUM got % = #{num.to_s}"
       end
-
       return num
     end
 
@@ -101,16 +100,18 @@ module YahooFinance
     
     def fetch
       allocate_fields_to_connections
-      if @fields_hash[:YAHOO_STATISTICS].size > 0
-        qt = YahooStock::Quote.new(:stocks_symbols => @symbols, :parameters => @fields_hash[:YAHOO_STATISTICS])
+      if @fields_hash[:YAHOO_STOCK_FIELDS].size > 0
+        # puts "SYMBOLS ARE: #{@symbols.to_s} AND PARAMETERS: #{@fields_hash[:YAHOO_STOCK_FIELDS].to_s}"
+        qt = YahooStock::Quote.new(:stock_symbols => @symbols)
+        qt.extended
         yshs = qt.results(:to_hash).output
         # here we need to add StockQuote outputs to @results_hash
       end
-      if @fields_hash[:KEY_STATISTICS].size > 0
-      end
+      # if @fields_hash[:KEY_STATISTICS].size > 0
+      # end
+      yshs
     end
     
-    private
     def allocate_fields_to_connections
       @fields_hash = {}
       @fields_hash[:YAHOO_STOCK_FIELDS] = []
@@ -123,6 +124,5 @@ module YahooFinance
         end
       end
     end
-    
   end
 end
