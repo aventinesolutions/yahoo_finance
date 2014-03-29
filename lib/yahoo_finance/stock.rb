@@ -103,7 +103,10 @@ module YahooFinance
       if @fields_hash[:YAHOO_STOCK_FIELDS].size > 0
         # puts "SYMBOLS ARE: #{@symbols.to_s} AND PARAMETERS: #{@fields_hash[:YAHOO_STOCK_FIELDS].to_s}"
         qt = YahooStock::Quote.new(:stock_symbols => @symbols)
-        qt.extended
+        qt.add_parameters(:symbol)
+        @fields_hash[:YAHOO_STOCK_FIELDS].each do |aField|
+          qt.add_parameters(aField)
+        end
         yshs = qt.results(:to_hash).output
         # here we need to add StockQuote outputs to @results_hash
       end
