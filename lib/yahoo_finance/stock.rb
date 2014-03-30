@@ -9,7 +9,7 @@ require 'yahoo_stock'
 module YahooFinance
   AVL_FIELDS = {
     :YAHOO_STOCK_FIELDS => YahooStock::Quote.new(:stock_symbols => ['AAPL']).valid_parameters,
-    :KEY_STATISTICS => []
+    :KEY_STATISTICS => YahooFinance::KeyStatistics.key_stats_available
   }
   
   # We are not interested parsing every type of field

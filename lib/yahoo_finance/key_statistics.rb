@@ -4,12 +4,17 @@ require 'nokogiri'
 module YahooFinance
   module KeyStatistics
     AVL_KEY_STATS = {
-      :Market_Cap => ['Market Cap ', :float],
-      :Enterprise_Value => ['Enterprise Value \(', :float],
-      :Trailing_PE => ['Trailing P\/E \(ttm, intraday\)', :float],
-      :Forward_PE => ['Forward P\/E (', :float],
-      :PEG_Ratio => ['PEG Ratio \(5 yr expected\)', :float],
-      :Price_to_Sales => ['Price\/Sales \(ttm\)', :float]
+      :market_cap => ['Market Cap ', :float],
+      :enterprise_value => ['Enterprise Value ', :float],
+      :trailing_pe => ['Trailing P\/E ', :float],
+      :forward_pe => ['Forward P\/E ', :float],
+      :peg_ratio => ['PEG Ratio ', :float],
+      :price_to_sales => ['Price\/Sales ', :float],
+      :revenue_ttm => ['Revenue \(ttm\)\:', :float],
+      :roa => ['Return on Assets', :float],
+      :roe => ['Return on Equity', :float],
+      :total_debt_to_equity => ['Total Debt\/Equity', :float],
+      :book_value_per_share => ['Book Value Per Share', :float]
       # ,
       # :Price_to_Book,
       # :Enterprise_Value_to_Revenue,
@@ -78,8 +83,8 @@ module YahooFinance
       
         matchstr = "#{AVL_KEY_STATS[key_stat][0]}"
         @page_keys.each_with_index do |key, i|
-          if key.text.match(/^"#{AVL_KEY_STATS[key_stat][0]}"/)
-            return @page_values[i]
+          if key.text.match(/^#{AVL_KEY_STATS[key_stat][0]}/)
+            return YahooFinance.parse_yahoo_field @page_values[i].text.to_s
           end
         end
         return nil
