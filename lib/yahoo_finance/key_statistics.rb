@@ -6,15 +6,16 @@ module YahooFinance
     AVL_KEY_STATS = {
       :market_cap => ['Market Cap ', :float],
       :enterprise_value => ['Enterprise Value ', :float],
-      :trailing_pe => ['Trailing P\/E ', :float],
+      :trailing_pe => ['Trailing P\/E \(ttm\, intraday\)\:', :float],
       :forward_pe => ['Forward P\/E ', :float],
       :peg_ratio => ['PEG Ratio ', :float],
-      :price_to_sales => ['Price\/Sales ', :float],
-      :revenue_ttm => ['Revenue \(ttm\)\:', :float],
-      :roa => ['Return on Assets', :float],
-      :roe => ['Return on Equity', :float],
-      :total_debt_to_equity => ['Total Debt\/Equity', :float],
-      :book_value_per_share => ['Book Value Per Share', :float]
+      :price_to_sales_ttm => ['Price\/Sales  \(ttm\)\:', "Price/Sales, trailing 12 months"],
+      :price_to_book_mrq => ['Price\/Book \(mrq\):', "Price/Book, most recent quarter"]
+      :revenue_ttm => ['Revenue \(ttm\)\:', "Revenue, trailing twelve months"],
+      :roa_ttm => ['Return on Assets \(ttm\)\:', "Return on Assets, trailing twelve months"],
+      :roe_ttm => ['Return on Equity \(ttm\)\:', "Return on Equity, trailing twelve months"],
+      :total_debt_to_equity_mrq => ['Total Debt\/Equity \(mrq\):', "Total Debt/Equity, most recent quarter"],
+      :book_value_per_share_mrq => ['Book Value Per Share \(mrq\):', "Book Value per share, most recent quarter"]
       # ,
       # :Price_to_Book,
       # :Enterprise_Value_to_Revenue,

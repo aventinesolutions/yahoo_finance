@@ -1,5 +1,6 @@
 
 require 'yahoo_stock'
+require 'yahoo_finance/key_statistics'
 
 #YahooStock::Quote.new(:stock_symbols => ['AAPL']).valid_parameters,
 # {
@@ -64,7 +65,7 @@ module YahooFinance
   end
   
   class Stock
-    @@available_fields = [] | AVL_FIELDS[:YAHOO_STOCK_FIELDS]
+    @@available_fields = (AVL_FIELDS[:YAHOO_STOCK_FIELDS] + AVL_FIELDS[:KEY_STATISTICS])
     @symbols = []
     @fields = []
     @fields_hash = {}
