@@ -4,13 +4,13 @@ require 'nokogiri'
 module YahooFinance
   module KeyStatistics
     AVL_KEY_STATS = {
-      :market_cap => ['Market Cap ', :float],
-      :enterprise_value => ['Enterprise Value ', :float],
-      :trailing_pe => ['Trailing P\/E \(ttm\, intraday\)\:', :float],
-      :forward_pe => ['Forward P\/E ', :float],
-      :peg_ratio => ['PEG Ratio ', :float],
+      :market_cap => ['Market Cap ', "Market Cap, intraday"],
+      :enterprise_value => ['Enterprise Value ', "Enterprise Value"],
+      :trailing_pe => ['Trailing P\/E \(ttm\, intraday\)\:', "Trailing PE, trailing twelve months, intraday (based on price)"],
+      :forward_pe => ['Forward P\/E ', "Forward P/E"],
+      :peg_ratio => ['PEG Ratio ', "PEG Ratio (5 year expected (forward looking))"],
       :price_to_sales_ttm => ['Price\/Sales  \(ttm\)\:', "Price/Sales, trailing 12 months"],
-      :price_to_book_mrq => ['Price\/Book \(mrq\):', "Price/Book, most recent quarter"]
+      :price_to_book_mrq => ['Price\/Book \(mrq\):', "Price/Book, most recent quarter"],
       :revenue_ttm => ['Revenue \(ttm\)\:', "Revenue, trailing twelve months"],
       :roa_ttm => ['Return on Assets \(ttm\)\:', "Return on Assets, trailing twelve months"],
       :roe_ttm => ['Return on Equity \(ttm\)\:', "Return on Equity, trailing twelve months"],

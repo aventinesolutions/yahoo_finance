@@ -26,7 +26,7 @@ module YahooFinance
       aField.gsub! /\,/, ''
     end
 
-    m=aField.match  /^([\-]{0,1})([\d]*)(\.[\d]{1,})([KB\%]{0,1})$/
+    m=aField.match  /^([\-\+]{0,1})([\d]*)(\.[\d]{1,})([KB\%]{0,1})$/
     if m # && (m.size == 3)
       num = ((m[1] || "")+(m[2] || "")+(m[3] || "")).to_f
 
@@ -108,14 +108,37 @@ module YahooFinance
         @fields_hash[:YAHOO_STOCK_FIELDS].each do |aField|
           qt.add_parameters(aField)
         end
+        
+        # initialize symbol rows
+        @results_hash = {}
+        @symbols.each do |aSymbol|
+          @results_hash[aSymbol] = {}
+        end
+        
         yshs = qt.results(:to_hash).output
+        @fields_hash[:YAHOO_STOCK_FIELDS].each do |aField|
+          yshs.each do |aSymbolRow|
+            symbol = aSymbolRow[:symbol]
+            value = aSymbolRow[aField]
+            @results_hash[symbol][aField] = YahooFinance.parse_yahoo_field(value)
+          end
+        end
         # here we need to add StockQuote outputs to @results_hash
       end
-      # if @fields_hash[:KEY_STATISTICS].size > 0
-      # end
-      yshs
+      if @fields_hash[:KEY_STATISTICS].size > 0
+        # since Key Statistics fetches a page at a time, we have to iterate
+        @symbols.each do |aSymbol|
+          stp = YahooFinance::KeyStatistics::StatsPage.new(aSymbol)
+          stp.fetch
+          @fields_hash[:KEY_STATISTICS].each do |aField|
+            value = stp.value_for(aField) # this already parses the numbers
+            @results_hash[aSymbol][aField] = value
+          end
+        end
+      end
+      @results_hash
     end
-    
+        
     def allocate_fields_to_connections
       @fields_hash = {}
       @fields_hash[:YAHOO_STOCK_FIELDS] = []
