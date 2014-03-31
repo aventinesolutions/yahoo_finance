@@ -11,15 +11,30 @@ module YahooFinance
       :peg_ratio => ['PEG Ratio ', "PEG Ratio (5 year expected (forward looking))"],
       :price_to_sales_ttm => ['Price\/Sales  \(ttm\)\:', "Price/Sales, trailing 12 months"],
       :price_to_book_mrq => ['Price\/Book \(mrq\):', "Price/Book, most recent quarter"],
-      :revenue_ttm => ['Revenue \(ttm\)\:', "Revenue, trailing twelve months"],
       :roa_ttm => ['Return on Assets \(ttm\)\:', "Return on Assets, trailing twelve months"],
       :roe_ttm => ['Return on Equity \(ttm\)\:', "Return on Equity, trailing twelve months"],
       :total_debt_to_equity_mrq => ['Total Debt\/Equity \(mrq\):', "Total Debt/Equity, most recent quarter"],
-      :book_value_per_share_mrq => ['Book Value Per Share \(mrq\):', "Book Value per share, most recent quarter"]
+      :book_value_per_share_mrq => ['Book Value Per Share \(mrq\):', "Book Value per share, most recent quarter"],
+      # Income Statement
+      :revenue_ttm => ['Revenue \(ttm\)\:', "Revenue, trailing twelve months"],
+      :revenue_per_share_ttm => ['Revenue Per Share \(ttm\)\:', "Revenue per share, trailing twelve months"],
+      :qtrly_revenue_growth_yoy => ['Qtrly Revenue Growth \(yoy\)\:', "Quarterly Revenue Growth, year on year"],
+      :diluted_eps_ttm => ['Diluted EPS \(ttm\)\:', "Diluted Earnings per share, trailing twelve months"],
+      :qtrly_earnings_growth_yoy => ['Qtrly Earnings Growth \(yoy\)\:', "Quarterly Earnings Growth, year on year"],
+      # Balance Sheet
+      :total_cash_mrq => ['Total Cash \(mrq\)\:', "Total Cash, most recent quarter"],
+      :total_cash_per_share_mrq => ['Total Cash Per Share \(mrq\)\:', "Total Cash per Share, most recent quarter"],
+      :total_debt_mrq => ['Total Debt (mrq):', "Total Debt, most recent quarter"],
+      :total_debt_to_equity_mrq => ['Total Debt/Equity \(mrq\)\:', "Total Debt/Equity (expressed as a percentage), most recent quarter"],
+      :current_ratio_mrq => ['Current Ratio \(mrq\)\:', "Total Current Assets / Total Current Liabilities, most recent quarter"],
+      :book_value_per_share_mrq => ['Book Value Per Share \(mrq\)\:', "Total Common Equity / Total Common Shares Outstanding, most recent quarter"],
+      # Trading additional info:
+      :beta => ['Beta\:', "Equity monthly beta relative to S&P500. Uses 36 months when available."],
+      # Share Statistics
+      :pcnt_held_by_insiders => ['\% Held by Insiders', "Percent of shares held by insiders (returned as a fraction of 1)"],
+      :pcnt_held_by_institutions => ['\% Held by Institutions', "Percent of shares held by institutions (returned as a fraction of 1)"],
+      :pcnt_short_of_float => ['Short % of Float \(', "Percent of shares shorted relative to total (returned as a fraction of 1)"]
       # ,
-      # :Price_to_Book,
-      # :Enterprise_Value_to_Revenue,
-      # :Enterprise_Value_to_EBITDA,
       # # Profitability
       # :Profit_Margin,
       # :Operating_Margin,
