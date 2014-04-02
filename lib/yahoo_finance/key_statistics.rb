@@ -31,9 +31,13 @@ module YahooFinance
       # Trading additional info:
       :beta => ['Beta\:', "Equity monthly beta relative to S&P500. Uses 36 months when available."],
       # Share Statistics
+      :shares_outstanding => ['Shares Outstanding', "Number of outstanding shares"],
       :pcnt_held_by_insiders => ['\% Held by Insiders', "Percent of shares held by insiders (returned as a fraction of 1)"],
       :pcnt_held_by_institutions => ['\% Held by Institutions', "Percent of shares held by institutions (returned as a fraction of 1)"],
-      :pcnt_short_of_float => ['Short % of Float \(', "Percent of shares shorted relative to total (returned as a fraction of 1)"]
+      :pcnt_short_of_float => ['Short % of Float \(', "Percent of shares shorted relative to total (returned as a fraction of 1)"],
+      # Cash Flow
+      :operating_cash_flow_ttm => ['Operating Cash Flow \(ttm\)\:', "Operating cash flow, trailing twelve months"],
+      :levered_cash_flow_ttm => ['Levered Free Cash Flow \(ttm\)\:', "Levered Free Cash Flow, trailing 12 months: (EBIT + Interest Expense) x (1 x Tax Rate) + Depreciation & Amort., Total + Other Amortization + Capital Expenditure + Sale (Purchase) of Intangible assets - Change in Net Working Capital + Pref. Dividends Paid + Total Debt Repaid + Total Debt Issued + Repurchase of Preferred + Issuance of Preferred Stock"]
       # ,
       # # Profitability
       # :Profit_Margin,
