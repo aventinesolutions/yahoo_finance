@@ -34,8 +34,11 @@ module YahooFinance
       when "K" then
         num *= 1000
         # puts "NUM got K = #{num.to_s}"
-      when "B" then
+      when "M" then
         num *= 1000000
+        # puts "NUM got B = #{num.to_s}"
+      when "B" then
+        num *= 1000000000
         # puts "NUM got B = #{num.to_s}"
       when '%' then
         num /= 100
