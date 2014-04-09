@@ -26,7 +26,7 @@ module YahooFinance
       aField.gsub! /\,/, ''
     end
 
-    m=aField.match  /^([\-\+]{0,1})([\d]*)(\.[\d]{1,})([KB\%]{0,1})$/
+    m=aField.match  /^([\-\+]{0,1})([\d]*)(\.[\d]{1,})([KMB\%]{0,1})$/
     if m # && (m.size == 3)
       num = ((m[1] || "")+(m[2] || "")+(m[3] || "")).to_f
 
