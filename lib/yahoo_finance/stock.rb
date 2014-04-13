@@ -104,29 +104,33 @@ module YahooFinance
     
     def fetch
       allocate_fields_to_connections
+      # initialize symbol rows
+      @results_hash = {}
+      @symbols.each do |aSymbol|
+        @results_hash[aSymbol] = {}
+      end
+      
       if @fields_hash[:YAHOO_STOCK_FIELDS].size > 0
         # puts "SYMBOLS ARE: #{@symbols.to_s} AND PARAMETERS: #{@fields_hash[:YAHOO_STOCK_FIELDS].to_s}"
-        qt = YahooStock::Quote.new(:stock_symbols => @symbols)
-        qt.add_parameters(:symbol)
-        @fields_hash[:YAHOO_STOCK_FIELDS].each do |aField|
-          qt.add_parameters(aField)
-        end
+
+        # Yahoo Stock API has some limits, therefore, we need to chunk the symbols
+        @symbols.each_slice(50).to_a.each do |symbol_slice|
+
+          qt = YahooStock::Quote.new(:stock_symbols => symbol_slice)
+          qt.add_parameters(:symbol)
+          @fields_hash[:YAHOO_STOCK_FIELDS].each do |aField|
+            qt.add_parameters(aField)
+          end
         
-        # initialize symbol rows
-        @results_hash = {}
-        @symbols.each do |aSymbol|
-          @results_hash[aSymbol] = {}
-        end
-        
-        yshs = qt.results(:to_hash).output
-        @fields_hash[:YAHOO_STOCK_FIELDS].each do |aField|
-          yshs.each do |aSymbolRow|
-            symbol = aSymbolRow[:symbol]
-            value = aSymbolRow[aField]
-            @results_hash[symbol][aField] = YahooFinance.parse_yahoo_field(value)
+          yshs = qt.results(:to_hash).output
+          @fields_hash[:YAHOO_STOCK_FIELDS].each do |aField|
+            yshs.each do |aSymbolRow|
+              symbol = aSymbolRow[:symbol]
+              value = aSymbolRow[aField]
+              @results_hash[symbol][aField] = YahooFinance.parse_yahoo_field(value)
+            end
           end
         end
-        # here we need to add StockQuote outputs to @results_hash
       end
       if @fields_hash[:KEY_STATISTICS].size > 0
         # since Key Statistics fetches a page at a time, we have to iterate
