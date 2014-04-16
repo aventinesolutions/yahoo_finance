@@ -18,7 +18,7 @@ describe YahooFinance do
       YahooFinance.parse_yahoo_field("3.25K").should == 3250.0
     end
     it "should parse a scaled float correctly, such as \"3.25B\"" do
-      YahooFinance.parse_yahoo_field("3.25B").should == 3250000.0
+      YahooFinance.parse_yahoo_field("3.25B").should == 3250000000.0
     end
     it "should parse a date, such as 'Feb 3, 2009'" do
       dt = YahooFinance.parse_yahoo_field("Feb 3, 2009")

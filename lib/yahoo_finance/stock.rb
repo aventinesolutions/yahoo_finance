@@ -114,7 +114,7 @@ module YahooFinance
         # puts "SYMBOLS ARE: #{@symbols.to_s} AND PARAMETERS: #{@fields_hash[:YAHOO_STOCK_FIELDS].to_s}"
 
         # Yahoo Stock API has some limits, therefore, we need to chunk the symbols
-        @symbols.each_slice(50).to_a.each do |symbol_slice|
+        @symbols.each_slice(40).to_a.each do |symbol_slice|
 
           qt = YahooStock::Quote.new(:stock_symbols => symbol_slice)
           qt.add_parameters(:symbol)
@@ -127,9 +127,15 @@ module YahooFinance
             yshs.each do |aSymbolRow|
               symbol = aSymbolRow[:symbol]
               value = aSymbolRow[aField]
-              @results_hash[symbol][aField] = YahooFinance.parse_yahoo_field(value)
+              begin
+                @results_hash[symbol][aField] = YahooFinance.parse_yahoo_field(value)
+              rescue
+                puts "Failed in symbol #{symbol.to_s} field #{aField.to_s} value #{(value || "NULL").to_s}"
+                puts "RESULT ROW: #{aSymbolRow.to_s}"
+              end
             end
           end
+          sleep(Random.new(Random.new_seed).rand*7)   # sleep up to 7 seconds
         end
       end
       if @fields_hash[:KEY_STATISTICS].size > 0

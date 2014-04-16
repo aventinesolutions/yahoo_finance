@@ -13,7 +13,6 @@ module YahooFinance
       :price_to_book_mrq => ['Price\/Book \(mrq\):', "Price/Book, most recent quarter"],
       :roa_ttm => ['Return on Assets \(ttm\)\:', "Return on Assets, trailing twelve months"],
       :roe_ttm => ['Return on Equity \(ttm\)\:', "Return on Equity, trailing twelve months"],
-      :total_debt_to_equity_mrq => ['Total Debt\/Equity \(mrq\):', "Total Debt/Equity, most recent quarter"],
       :book_value_per_share_mrq => ['Book Value Per Share \(mrq\):', "Book Value per share, most recent quarter"],
       # Income Statement
       :revenue_ttm => ['Revenue \(ttm\)\:', "Revenue, trailing twelve months"],
@@ -85,10 +84,12 @@ module YahooFinance
       
       def fetch
         url = "http://finance.yahoo.com/q/ks?s=#{@symbol}"
-        doc = Nokogiri::HTML(open(url))
-        # puts "DATA IS: #{data}"
-        @page_keys = doc.xpath('//td[@class="yfnc_tablehead1"]')
-        @page_values = doc.xpath('//td[@class="yfnc_tabledata1"]')
+        open(url) do |stream|
+          doc = Nokogiri::HTML(stream)
+          # puts "DATA IS: #{data}"
+          @page_keys = doc.xpath('//td[@class="yfnc_tablehead1"]')
+          @page_values = doc.xpath('//td[@class="yfnc_tabledata1"]')
+        end
       end
     
       def all_stats
