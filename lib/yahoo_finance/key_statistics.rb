@@ -91,14 +91,7 @@ module YahooFinance
           @page_values = doc.xpath('//td[@class="yfnc_tabledata1"]')
         end
       end
-    
-      def all_stats
-        ret = {}
-        mcap = value_for :Market_Cap
-        ret[:Market_Cap] = mcap
-        ret
-      end
-    
+        
       def value_for key_stat
         return nil if !@page_keys
       

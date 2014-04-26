@@ -1,16 +1,14 @@
 
 require 'yahoo_stock'
 require 'yahoo_finance/key_statistics'
+require 'yahoo_finance/company_events'
 
-#YahooStock::Quote.new(:stock_symbols => ['AAPL']).valid_parameters,
-# {
-# #   :PE_trailing => "Trailing P/E (ttm, intraday):"
-# }
 
 module YahooFinance
   AVL_FIELDS = {
     :YAHOO_STOCK_FIELDS => YahooStock::Quote.new(:stock_symbols => ['AAPL']).valid_parameters,
-    :KEY_STATISTICS => YahooFinance::KeyStatistics.key_stats_available
+    :KEY_STATISTICS => YahooFinance::KeyStatistics.key_stats_available,
+    :COMPANY_EVENTS => YahooFinance::CompanyEvents.key_events_available
   }
   
   # We are not interested parsing every type of field
@@ -21,7 +19,7 @@ module YahooFinance
 
     aField.strip!
     
-    if aField.match /^([\-]{,1})([\d\,])*(\.[\d]+)*$/
+    if aField.match /^([\-\+]{,1})([\d\,])*(\.[\d]+)*$/
       # it's a number as far as we care; let's strip the commas....
       aField.gsub! /\,/, ''
     end
@@ -47,7 +45,7 @@ module YahooFinance
       return num
     end
 
-    if aField.match /^([\-]*[0-9]*)(\.[0-9]*)*$/
+    if aField.match /^([\-\+]*[0-9]*)(\.[0-9]*)*$/
       # simple number
       return aField.to_f
     end
@@ -107,14 +105,15 @@ module YahooFinance
       # initialize symbol rows
       @results_hash = {}
       @symbols.each do |aSymbol|
-        @results_hash[aSymbol] = {}
+        @results_hash[aSymbol.upcase] = {}    # we do this to avoid problems with symbols misstyped with mixed upper/lower case
       end
       
+      # First we fetch symbols under YAHOO_STOCK_FIELDS
       if @fields_hash[:YAHOO_STOCK_FIELDS].size > 0
         # puts "SYMBOLS ARE: #{@symbols.to_s} AND PARAMETERS: #{@fields_hash[:YAHOO_STOCK_FIELDS].to_s}"
 
         # Yahoo Stock API has some limits, therefore, we need to chunk the symbols
-        @symbols.each_slice(40).to_a.each do |symbol_slice|
+        @symbols.each_slice(50).to_a.each do |symbol_slice|
 
           qt = YahooStock::Quote.new(:stock_symbols => symbol_slice)
           qt.add_parameters(:symbol)
@@ -138,6 +137,7 @@ module YahooFinance
           sleep(Random.new(Random.new_seed).rand*7)   # sleep up to 7 seconds
         end
       end
+      # Then we fetch fields from KEY STATISTICS
       if @fields_hash[:KEY_STATISTICS].size > 0
         # since Key Statistics fetches a page at a time, we have to iterate
         @symbols.each do |aSymbol|
@@ -147,6 +147,17 @@ module YahooFinance
             value = stp.value_for(aField) # this already parses the numbers
             @results_hash[aSymbol][aField] = value
           end
+        end
+      end
+      # Then we fetch Company Events
+      if @fields_hash[:COMPANY_EVENTS].size > 0
+        @symbols.each do |aSymbol|
+          stp = YahooFinance::CompanyEvents::CompanyEventsPage.new(aSymbol)
+          stp.fetch
+          @fields_hash[:COMPANY_EVENTS].each do |aField|
+            value = stp.value_for(aField) # this already parses the numbers
+            @results_hash[aSymbol][aField] = value
+          end         
         end
       end
       @results_hash
@@ -161,6 +172,8 @@ module YahooFinance
           @fields_hash[:YAHOO_STOCK_FIELDS] << aField
         elsif AVL_FIELDS[:KEY_STATISTICS].include? aField
           @fields_hash[:KEY_STATISTICS] << aField
+        elsif AVL_FIELDS[:COMPANY_EVENTS].include? aField
+          @fields_hash[:COMPANY_EVENTS] << aField
         end
       end
     end
