@@ -4,6 +4,7 @@ require 'nokogiri'
 module YahooFinance
   module KeyStatistics
     AVL_KEY_STATS = {
+      # String_to_parse, Description, Source Value format factor (some values are in % but dont't show %)
       :market_cap => ['Market Cap ', "Market Cap, intraday"],
       :enterprise_value => ['Enterprise Value ', "Enterprise Value"],
       :trailing_pe => ['Trailing P\/E \(ttm\, intraday\)\:', "Trailing PE, trailing twelve months, intraday (based on price)"],
@@ -24,7 +25,7 @@ module YahooFinance
       :total_cash_mrq => ['Total Cash \(mrq\)\:', "Total Cash, most recent quarter"],
       :total_cash_per_share_mrq => ['Total Cash Per Share \(mrq\)\:', "Total Cash per Share, most recent quarter"],
       :total_debt_mrq => ['Total Debt (mrq):', "Total Debt, most recent quarter"],
-      :total_debt_to_equity_mrq => ['Total Debt/Equity \(mrq\)\:', "Total Debt/Equity (expressed as a percentage), most recent quarter"],
+      :total_debt_to_equity_mrq => ['Total Debt/Equity \(mrq\)\:', "Total Debt/Equity (expressed as a percentage), most recent quarter", 0.01],
       :current_ratio_mrq => ['Current Ratio \(mrq\)\:', "Total Current Assets / Total Current Liabilities, most recent quarter"],
       :book_value_per_share_mrq => ['Book Value Per Share \(mrq\)\:', "Total Common Equity / Total Common Shares Outstanding, most recent quarter"],
       # Trading additional info:
@@ -98,7 +99,11 @@ module YahooFinance
         matchstr = "#{AVL_KEY_STATS[key_stat][0]}"
         @page_keys.each_with_index do |key, i|
           if key.text.match(/^#{AVL_KEY_STATS[key_stat][0]}/)
-            return YahooFinance.parse_yahoo_field @page_values[i].text.to_s
+            value YahooFinance.parse_yahoo_field @page_values[i].text.to_s
+            if AVL_KEY_STATS[key_stat][2]
+              value *= AVL_KEY_STATS[key_stat][2]
+            end
+            return value
           end
         end
         return nil

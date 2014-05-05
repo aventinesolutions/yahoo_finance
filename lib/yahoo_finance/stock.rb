@@ -62,11 +62,19 @@ module YahooFinance
       return dt if dt
     end
     
+    #else make an attempt to parse as date
+    dt = nil
+    begin
+      dt = Date.parse(aField)
+    rescue
+    end
+    return dt if dt
+    
     aField
   end
   
   class Stock
-    @@available_fields = (AVL_FIELDS[:YAHOO_STOCK_FIELDS] + AVL_FIELDS[:KEY_STATISTICS])
+    @@available_fields = (AVL_FIELDS[:YAHOO_STOCK_FIELDS] + AVL_FIELDS[:KEY_STATISTICS] + AVL_FIELDS[:COMPANY_EVENTS])
     @symbols = []
     @fields = []
     @fields_hash = {}
@@ -167,6 +175,7 @@ module YahooFinance
       @fields_hash = {}
       @fields_hash[:YAHOO_STOCK_FIELDS] = []
       @fields_hash[:KEY_STATISTICS] = []
+      @fields_hash[:COMPANY_EVENTS] = []
       @fields.each do |aField|
         if AVL_FIELDS[:YAHOO_STOCK_FIELDS].include? aField
           @fields_hash[:YAHOO_STOCK_FIELDS] << aField
