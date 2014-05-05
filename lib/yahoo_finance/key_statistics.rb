@@ -99,7 +99,7 @@ module YahooFinance
         matchstr = "#{AVL_KEY_STATS[key_stat][0]}"
         @page_keys.each_with_index do |key, i|
           if key.text.match(/^#{AVL_KEY_STATS[key_stat][0]}/)
-            value YahooFinance.parse_yahoo_field @page_values[i].text.to_s
+            value = YahooFinance.parse_yahoo_field @page_values[i].text.to_s
             if AVL_KEY_STATS[key_stat][2]
               value *= AVL_KEY_STATS[key_stat][2]
             end
