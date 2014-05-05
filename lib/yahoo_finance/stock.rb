@@ -155,6 +155,7 @@ module YahooFinance
             value = stp.value_for(aField) # this already parses the numbers
             @results_hash[aSymbol][aField] = value
           end
+          sleep(Random.new(Random.new_seed).rand*7)   # sleep up to 7 seconds
         end
       end
       # Then we fetch Company Events
@@ -165,7 +166,8 @@ module YahooFinance
           @fields_hash[:COMPANY_EVENTS].each do |aField|
             value = stp.value_for(aField) # this already parses the numbers
             @results_hash[aSymbol][aField] = value
-          end         
+          end
+          sleep(Random.new(Random.new_seed).rand*7)   # sleep up to 7 seconds        
         end
       end
       @results_hash
