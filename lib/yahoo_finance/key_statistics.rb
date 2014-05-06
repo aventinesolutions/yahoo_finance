@@ -85,11 +85,15 @@ module YahooFinance
       
       def fetch
         url = "http://finance.yahoo.com/q/ks?s=#{@symbol}"
-        open(url) do |stream|
-          doc = Nokogiri::HTML(stream)
-          # puts "DATA IS: #{data}"
-          @page_keys = doc.xpath('//td[@class="yfnc_tablehead1"]')
-          @page_values = doc.xpath('//td[@class="yfnc_tabledata1"]')
+        begin
+          open(url) do |stream|
+            doc = Nokogiri::HTML(stream)
+            # puts "DATA IS: #{data}"
+            @page_keys = doc.xpath('//td[@class="yfnc_tablehead1"]')
+            @page_values = doc.xpath('//td[@class="yfnc_tabledata1"]')
+          end
+        rescue error
+          puts "Failed to open and parse key stats for #{@symbol}"
         end
       end
         

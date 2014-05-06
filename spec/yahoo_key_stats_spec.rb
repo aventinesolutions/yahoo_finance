@@ -7,7 +7,7 @@ describe YahooFinance::KeyStatistics do
   # end
   
   describe "key statistics" do
-    it "available stats should include things like Price_to_Sales" do
+    it "available stats should include things like totdal_debt_to_equity_mrq" do
       YahooFinance::KeyStatistics::key_stats_available.include?(:price_to_sales_ttm).should == true
     end
     it "should fetch a key stat like :total_debt_to_equity_mrq for AAPL" do
