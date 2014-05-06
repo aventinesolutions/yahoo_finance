@@ -60,7 +60,7 @@ describe YahooFinance::Stock do
       results = @stock.fetch
       # puts "GOT RESULTS: #{results[0][:p_e_ratio]}"
       # let's parse the output
-      pe_ratio = results[0][:p_e_ratio] 
+      pe_ratio = results['AAPL'][:p_e_ratio] 
       case pe_ratio.class.name
       when "Float" then pe_ratio.class.name.should == "Float"
       when "String" then pe_ratio.should == "N/A"
@@ -73,7 +73,7 @@ describe YahooFinance::Stock do
       results = @stock.fetch
       # puts "GOT RESULTS: #{results[0][:p_e_ratio]}"
       # let's parse the output
-      bid = results[0][:bid]
+      bid = results['AAPL'][:bid]
       case bid.class.name
       when "Float" then bid.class.name.should == "Float"
       when "String" then bid.should == "N/A"
