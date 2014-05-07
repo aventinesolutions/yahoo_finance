@@ -92,8 +92,8 @@ module YahooFinance
             @page_keys = doc.xpath('//td[@class="yfnc_tablehead1"]')
             @page_values = doc.xpath('//td[@class="yfnc_tabledata1"]')
           end
-        rescue error
-          puts "Failed to open and parse key stats for #{@symbol}"
+        rescue Exception => e
+          puts "Failed to open and parse key stats for #{@symbol} because of #{e.message}"
         end
       end
         
