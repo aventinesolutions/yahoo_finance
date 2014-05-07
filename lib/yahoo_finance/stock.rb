@@ -160,7 +160,7 @@ module YahooFinance
               end
             end
           end
-          sleep(Random.new(Random.new_seed).rand*7)   # sleep up to 7 seconds
+          sleep(Random.new(Random.new_seed).rand*@@insert_variable_delay)  if @@insert_variable_delays
         end
       end
       # Then we fetch fields from KEY STATISTICS
@@ -173,7 +173,7 @@ module YahooFinance
             value = stp.value_for(aField) # this already parses the numbers
             @results_hash[aSymbol][aField] = value
           end
-          sleep(Random.new(Random.new_seed).rand*7)   # sleep up to 7 seconds
+          sleep(Random.new(Random.new_seed).rand*@@insert_variable_delay)  if @@insert_variable_delays
         end
       end
       # Then we fetch Company Events
@@ -185,7 +185,7 @@ module YahooFinance
             value = stp.value_for(aField) # this already parses the numbers
             @results_hash[aSymbol][aField] = value
           end
-          sleep(Random.new(Random.new_seed).rand*7)   # sleep up to 7 seconds        
+          sleep(Random.new(Random.new_seed).rand*@@insert_variable_delay)  if @@insert_variable_delays
         end
       end
       @results_hash
