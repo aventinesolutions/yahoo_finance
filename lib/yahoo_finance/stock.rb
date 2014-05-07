@@ -75,10 +75,28 @@ module YahooFinance
   
   class Stock
     @@available_fields = (AVL_FIELDS[:YAHOO_STOCK_FIELDS] + AVL_FIELDS[:KEY_STATISTICS] + AVL_FIELDS[:COMPANY_EVENTS])
+    @@insert_variable_delays = true
+    @@insert_variable_delay = 7
     @symbols = []
     @fields = []
     @fields_hash = {}
     @results_hash = {}
+    
+    def self.insert_variable_delays
+      @@insert_variable_delays
+    end
+    
+    def self.insert_variable_delays= trueFalse
+      @@insert_variable_delays = trueFalse
+    end
+    
+    def self.insert_variable_delay
+      @@insert_variable_delay
+    end
+    
+    def self.insert_variable_delay= aDelay
+      @@insert_variable_delay = aDelay
+    end
     
     def initialize(symbols, fields = nil)
       @symbols = symbols
@@ -136,7 +154,7 @@ module YahooFinance
               value = aSymbolRow[aField]
               begin
                 @results_hash[symbol][aField] = YahooFinance.parse_yahoo_field(value)
-              rescue
+              rescue Exception => e
                 puts "Failed in symbol #{symbol.to_s} field #{aField.to_s} value #{(value || "NULL").to_s}"
                 puts "RESULT ROW: #{aSymbolRow.to_s}"
               end
