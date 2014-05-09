@@ -86,6 +86,7 @@ module YahooFinance
       def fetch
         url = "http://finance.yahoo.com/q/ks?s=#{@symbol}"
         begin
+          tries ||= 3
           open(url) do |stream|
             doc = Nokogiri::HTML(stream)
             # puts "DATA IS: #{data}"
@@ -93,7 +94,10 @@ module YahooFinance
             @page_values = doc.xpath('//td[@class="yfnc_tabledata1"]')
           end
         rescue Exception => e
-          puts "Failed to open and parse key stats for #{@symbol} because of #{e.message}"
+          logger.info "Failed to open and parse key stats for #{@symbol} because of #{e.message}. #{(tries > 0) ? 'retrying' : ''}"
+          if (tries -= 1) > 0
+            retry
+          end
         end
       end
         
