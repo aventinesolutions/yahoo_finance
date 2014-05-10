@@ -6,7 +6,7 @@ module YahooFinance
     AVL_KEY_STATS = {
       :next_earnings_announcement_date => ['Earnings announcement', "Next earnings call date"]
     }
-    def CompanyEvents.key_events_available
+    def CompanyEvents.key_events_available 
       return AVL_KEY_STATS.keys;
     end
 
