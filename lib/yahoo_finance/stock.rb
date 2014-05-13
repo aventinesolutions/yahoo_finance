@@ -113,7 +113,13 @@ module YahooFinance
     
     def available_fields
       @@available_fields
-    end  
+    end
+    
+    # NOTE -- UPDATE THIS WHEN YOU ADD A NEW PAGE %%
+    def available_fields_and_descriptions
+      ysh = {}; YahooFinance::AVL_FIELDS[:YAHOO_STOCK_FIELDS].each { |field| ysh[field] = "" }
+      ysh.merge(YahooFinance::KeyStatistics::AVL_KEY_STATS).merge(YahooFinance::CompanyEvents::AVL_KEY_STATS)
+    end
     
     def add_symbol(aSymbol)
       aSymbol = aSymbol.strip || ""
