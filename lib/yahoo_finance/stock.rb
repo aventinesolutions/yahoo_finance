@@ -76,7 +76,7 @@ module YahooFinance
   class Stock
     @@available_fields = (AVL_FIELDS[:YAHOO_STOCK_FIELDS] + AVL_FIELDS[:KEY_STATISTICS] + AVL_FIELDS[:COMPANY_EVENTS])
     @@insert_variable_delays = true
-    @@insert_variable_delay = 3
+    @@insert_variable_delay = 2
     @symbols = []
     @fields = []
     @fields_hash = {}
