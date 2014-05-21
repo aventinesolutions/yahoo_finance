@@ -94,7 +94,7 @@ module YahooFinance
             @page_values = doc.xpath('//td[@class="yfnc_tabledata1"]')
           end
         rescue Exception => e
-          logger.info "Failed to open and parse key stats for #{@symbol} because of #{e.message}. #{(tries > 0) ? 'retrying' : ''}"
+          puts "Failed to open and parse key stats for #{@symbol} because of #{e.message}. #{(tries > 0) ? 'retrying' : ''}"
           if (tries -= 1) > 0
             retry
           end
