@@ -36,6 +36,19 @@ module YahooFinance
           if key_stat != :upgrades_downgrades_history
             value = @doc.xpath("//td[text() = '#{AVL_KEY_STATS[key_stat][0]}']")[0].parent.children[1].text
             return YahooFinance.parse_yahoo_field(value)
+          elsif key_stat == :upgrades_downgrades_history
+            ret = []
+            tbl = @doc.xpath("//th[text() = 'Upgrades & Downgrades History']")[0].parent.parent.parent.children[1].xpath("tr")
+            for (i = 1; i < tbl.size; i++) do
+              r = {}
+              r[:date] = tbl[i][0].text
+              r[:firm] = tbl[i][1].text
+              r[:action] = tbl[i][2].text
+              r[:from]  = tbl[i][3].text
+              r[:to] = tbl[i][4].text
+              ret << r
+            end
+            ret
           end
         rescue
         end
