@@ -76,7 +76,9 @@ module YahooFinance
   class Stock
     @@available_fields = (AVL_FIELDS[:YAHOO_STOCK_FIELDS] + AVL_FIELDS[:KEY_STATISTICS] + AVL_FIELDS[:COMPANY_EVENTS])
     @@insert_variable_delays = true
-    @@insert_variable_delay = 2
+    @@insert_variable_delay = 4
+    @@retry_times = 3
+    @@retry_variable_delay = 30
     @symbols = []
     @fields = []
     @fields_hash = {}
@@ -173,25 +175,40 @@ module YahooFinance
       if @fields_hash[:KEY_STATISTICS].size > 0
         # since Key Statistics fetches a page at a time, we have to iterate
         @symbols.each do |aSymbol|
-          stp = YahooFinance::KeyStatistics::StatsPage.new(aSymbol)
-          stp.fetch
-          @fields_hash[:KEY_STATISTICS].each do |aField|
-            value = stp.value_for(aField) # this already parses the numbers
-            @results_hash[aSymbol][aField] = value
+          tries = 0
+          begin
+            stp = YahooFinance::KeyStatistics::StatsPage.new(aSymbol)
+            stp.fetch
+            @fields_hash[:KEY_STATISTICS].each do |aField|
+              value = stp.value_for(aField) # this already parses the numbers
+              @results_hash[aSymbol][aField] = value
+            end
+            sleep(Random.new(Random.new_seed).rand*@@insert_variable_delay)  if @@insert_variable_delays
+          rescue
+            tries += 1
+            sleep(@@retry_variable_delay)
+            retry if tries <= @@retry_times
           end
-          sleep(Random.new(Random.new_seed).rand*@@insert_variable_delay)  if @@insert_variable_delays
         end
       end
       # Then we fetch Company Events
       if @fields_hash[:COMPANY_EVENTS].size > 0
         @symbols.each do |aSymbol|
-          stp = YahooFinance::CompanyEvents::CompanyEventsPage.new(aSymbol)
-          stp.fetch
-          @fields_hash[:COMPANY_EVENTS].each do |aField|
-            value = stp.value_for(aField) # this already parses the numbers
-            @results_hash[aSymbol][aField] = value
-          end
-          sleep(Random.new(Random.new_seed).rand*@@insert_variable_delay)  if @@insert_variable_delays
+          tries = 0
+          begin
+            stp = YahooFinance::CompanyEvents::CompanyEventsPage.new(aSymbol)
+            stp.fetch
+            @fields_hash[:COMPANY_EVENTS].each do |aField|
+              value = stp.value_for(aField) # this already parses the numbers
+              @results_hash[aSymbol][aField] = value
+            end
+            sleep(Random.new(Random.new_seed).rand*@@insert_variable_delay)  if @@insert_variable_delays
+          rescue
+            puts "Symbol: #{aSymbol} - retrying ##{tries.to_s}"
+            tries += 1
+            sleep(@@retry_variable_delay)
+            retry if tries <= @@retry_times
+          end           
         end
       end
       @results_hash

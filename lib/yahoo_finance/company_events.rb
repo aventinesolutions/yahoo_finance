@@ -25,10 +25,13 @@ module YahooFinance
       end
        
       def value_for key_stat
-        if key_stat == :next_earnings_announcement_date
-          if @doc.css('table#yfncsumtab//table.yfnc_datamodoutline1//table//td.yfnc_tabledata1')[1].text == "Earnings announcement"
-            return YahooFinance.parse_yahoo_field(@doc.css('table#yfncsumtab//table.yfnc_datamodoutline1//table//td.yfnc_tabledata1')[0].text)
+        begin
+          if key_stat == :next_earnings_announcement_date
+            if @doc.css('table#yfncsumtab//table.yfnc_datamodoutline1//table//td.yfnc_tabledata1')[1].text == "Earnings announcement"
+              return YahooFinance.parse_yahoo_field(@doc.css('table#yfncsumtab//table.yfnc_datamodoutline1//table//td.yfnc_tabledata1')[0].text)
+            end
           end
+        rescue
         end
         return nil
       end
