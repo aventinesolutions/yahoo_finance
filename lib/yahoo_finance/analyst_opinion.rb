@@ -41,11 +41,11 @@ module YahooFinance
             tbl = @doc.xpath("//th[text() = 'Upgrades & Downgrades History']")[0].parent.parent.parent.children[1].xpath("tr")
             for i in 1..tbl.size do
               r = {}
-              r[:date] = tbl[i][0].text
-              r[:firm] = tbl[i][1].text
-              r[:action] = tbl[i][2].text
-              r[:from]  = tbl[i][3].text
-              r[:to] = tbl[i][4].text
+              r[:date] = tbl[i].children[0].text
+              r[:firm] = tbl[i].children[1].text
+              r[:action] = tbl[i].children[2].text
+              r[:from]  = tbl[i].children[3].text
+              r[:to] = tbl[i].children[4].text
               ret << r
             end
             return ret
