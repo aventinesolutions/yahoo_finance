@@ -11,7 +11,7 @@ module YahooFinance
       :price_target_high => ['High Target:', 'High Price Target'],
       :price_target_low => ['Low Target:', 'Low Price Target'],
       :brokers_count => ['No. of Brokers:', 'Number of Brokers with recommendations'],
-      :upgrades_downgrades_history => [, 'Upgrades/Downgrades History']
+      :upgrades_downgrades_history => ["", 'Upgrades/Downgrades History']
     }
     def CompanyEvents.key_events_available 
       return AVL_KEY_STATS.keys;
