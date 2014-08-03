@@ -48,7 +48,7 @@ module YahooFinance
               r[:to] = tbl[i][4].text
               ret << r
             end
-            ret
+            return ret
           end
         rescue
         end
