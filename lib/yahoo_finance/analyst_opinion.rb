@@ -39,7 +39,7 @@ module YahooFinance
           elsif key_stat == :upgrades_downgrades_history
             ret = []
             tbl = @doc.xpath("//th[text() = 'Upgrades & Downgrades History']")[0].parent.parent.parent.children[1].xpath("tr")
-            for (i = 1; i < tbl.size; i++) do
+            for i in 1..tbl.size do
               r = {}
               r[:date] = tbl[i][0].text
               r[:firm] = tbl[i][1].text
