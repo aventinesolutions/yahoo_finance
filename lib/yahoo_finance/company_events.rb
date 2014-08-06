@@ -3,11 +3,11 @@ require 'nokogiri'
 
 module YahooFinance
   module CompanyEvents
-    AVL_KEY_STATS = {
+    COMPANY_EVENTS_STATS = {
       :next_earnings_announcement_date => ['Earnings announcement', "Next earnings call date"]
     }
     def CompanyEvents.key_events_available 
-      return AVL_KEY_STATS.keys;
+      return YahooFinance::CompanyEvents::COMPANY_EVENTS_STATS.keys;
     end
 
     class CompanyEventsPage
