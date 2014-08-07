@@ -12,7 +12,7 @@ module YahooFinance
       :price_target_low => ['Low Target:', 'Low Price Target'],
       :brokers_count => ['No. of Brokers:', 'Number of Brokers with recommendations'],
       :upgrades_downgrades_history => ["", 'Upgrades/Downgrades History'],
-      :recommendation_trends => ["", "Recommendation Trends"]
+      :recommendation_trends => ["", "Recommendation Trends - current, 1 month ago, 2 months ago, and 3 months ago"]
     }
     def AnalystOpinion.key_events_available 
       return AVL_KEY_STATS.keys;
@@ -34,10 +34,7 @@ module YahooFinance
        
       def value_for key_stat
         begin
-          if key_stat != :upgrades_downgrades_history
-            value = @doc.xpath("//td[text() = '#{AVL_KEY_STATS[key_stat][0]}']")[0].parent.children[1].text
-            return YahooFinance.parse_yahoo_field(value)
-          elsif key_stat == :upgrades_downgrades_history
+          if key_stat == :upgrades_downgrades_history
             ret = []
             tbl = @doc.xpath("//th[text() = 'Upgrades & Downgrades History']")[0].parent.parent.parent.children[1].xpath("tr")
             for i in 1..(tbl.size-1) do
@@ -50,23 +47,19 @@ module YahooFinance
               ret << r
             end
             return ret
-          elsif key_stat == :recommendation_trends
+          end
+          if key_stat == :recommendation_trends
             ret = {}
-            puts "DOC IS #{@doc}"
             tbl1 = @doc.xpath("//th[text() = 'Recommendation Trends']")[0].parent.parent
-            puts "TABLE IS #{tbl1.to_s}"
             elem = tbl1.parent
             sibling_idx = elem.children.index(tbl1)+1
             sibling = elem.children[sibling_idx]
-            puts "SIBLING IS #{sibling.to_s}"
             # now get all the subnodes...
             table_rows = sibling.xpath(".//table//tr")  # really contained within a subtable
             for i in 1..(table_rows.size-1) do
               r = table_rows[i]
-              puts "GOT ROW #{r.text}"
               header = r.xpath(".//th")
               symbol = header[0].text.gsub(' ','').to_sym
-              puts "GOT MY SYMBOL: #{symbol.to_s}"
               cells = r.xpath(".//td")
               ar = []
               cells.each do |cell|
@@ -82,8 +75,11 @@ module YahooFinance
             end
             return ret
           end
+          if [:upgrades_downgrades_history, :recommendation_trends].include?(key_stat) == false
+            value = @doc.xpath("//td[text() = '#{AVL_KEY_STATS[key_stat][0]}']")[0].parent.children[1].text
+            return YahooFinance.parse_yahoo_field(value)
+          end
         rescue
-          puts "EXCEPTION"
         end
         return nil
       end  

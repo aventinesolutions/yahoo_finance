@@ -81,5 +81,11 @@ describe YahooFinance::Stock do
         bid.class.name.should == "Float" #force a failure
       end
     end
+    it "should return value for a field such as :brokers_count and it should be > 0 for AAPL" do
+      @stock.add_field(:brokers_count)
+      results = @stock.fetch
+      brokers_count = results['AAPL'][:brokers_count]
+      brokers_count.should > 0
+    end
   end
 end

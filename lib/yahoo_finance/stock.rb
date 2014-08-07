@@ -2,13 +2,20 @@
 require 'yahoo_stock'
 require 'yahoo_finance/key_statistics'
 require 'yahoo_finance/company_events'
+require 'yahoo_finance/analyst_opinion'
 
 
 module YahooFinance
   AVL_FIELDS = {
     :YAHOO_STOCK_FIELDS => YahooStock::Quote.new(:stock_symbols => ['AAPL']).valid_parameters,
     :KEY_STATISTICS => YahooFinance::KeyStatistics.key_stats_available,
-    :COMPANY_EVENTS => YahooFinance::CompanyEvents.key_events_available
+    :COMPANY_EVENTS => YahooFinance::CompanyEvents.key_events_available,
+    :ANALYST_OPINION => YahooFinance::AnalystOpinion.key_events_available
+  }
+  DRIVERS = {
+    :KEY_STATISTICS => YahooFinance::KeyStatistics::StatsPage,
+    :COMPANY_EVENTS => YahooFinance::CompanyEvents::CompanyEventsPage,
+    :ANALYST_OPINION => YahooFinance::AnalystOpinion::AnalystOpinionPage
   }
   
   # We are not interested parsing every type of field
@@ -74,7 +81,7 @@ module YahooFinance
   end
   
   class Stock
-    @@available_fields = (AVL_FIELDS[:YAHOO_STOCK_FIELDS] + AVL_FIELDS[:KEY_STATISTICS] + AVL_FIELDS[:COMPANY_EVENTS])
+    @@available_fields = (AVL_FIELDS[:YAHOO_STOCK_FIELDS] + AVL_FIELDS[:KEY_STATISTICS] + AVL_FIELDS[:COMPANY_EVENTS] + AVL_FIELDS[:ANALYST_OPINION])
     @@insert_variable_delays = true
     @@insert_variable_delay = 4
     @@retry_times = 3
@@ -172,43 +179,26 @@ module YahooFinance
         end
       end
       # Then we fetch fields from KEY STATISTICS
-      if @fields_hash[:KEY_STATISTICS].size > 0
-        # since Key Statistics fetches a page at a time, we have to iterate
-        @symbols.each do |aSymbol|
-          tries = 0
-          begin
-            stp = YahooFinance::KeyStatistics::StatsPage.new(aSymbol)
-            stp.fetch
-            @fields_hash[:KEY_STATISTICS].each do |aField|
-              value = stp.value_for(aField) # this already parses the numbers
-              @results_hash[aSymbol][aField] = value
+      DRIVERS.keys.each do |driver|
+        # puts "CHECKING #{driver.to_s}"
+        if @fields_hash[driver].size > 0
+          # puts "FETCHING FIELDS FOR #{driver.to_s}"
+          @symbols.each do |aSymbol|
+            tries = 0
+            begin
+              stp = DRIVERS[driver].new(aSymbol)
+              stp.fetch
+              @fields_hash[driver].each do |aField|
+                value = stp.value_for(aField) # this already parses the numbers
+                @results_hash[aSymbol][aField] = value
+              end
+              sleep(Random.new(Random.new_seed).rand*@@insert_variable_delay)  if @@insert_variable_delays
+            rescue
+              tries += 1
+              sleep(@@retry_variable_delay)
+              retry if tries <= @@retry_times
             end
-            sleep(Random.new(Random.new_seed).rand*@@insert_variable_delay)  if @@insert_variable_delays
-          rescue
-            tries += 1
-            sleep(@@retry_variable_delay)
-            retry if tries <= @@retry_times
           end
-        end
-      end
-      # Then we fetch Company Events
-      if @fields_hash[:COMPANY_EVENTS].size > 0
-        @symbols.each do |aSymbol|
-          tries = 0
-          begin
-            stp = YahooFinance::CompanyEvents::CompanyEventsPage.new(aSymbol)
-            stp.fetch
-            @fields_hash[:COMPANY_EVENTS].each do |aField|
-              value = stp.value_for(aField) # this already parses the numbers
-              @results_hash[aSymbol][aField] = value
-            end
-            sleep(Random.new(Random.new_seed).rand*@@insert_variable_delay)  if @@insert_variable_delays
-          rescue
-            puts "Symbol: #{aSymbol} - retrying ##{tries.to_s}"
-            tries += 1
-            sleep(@@retry_variable_delay)
-            retry if tries <= @@retry_times
-          end           
         end
       end
       @results_hash
@@ -216,18 +206,38 @@ module YahooFinance
         
     def allocate_fields_to_connections
       @fields_hash = {}
-      @fields_hash[:YAHOO_STOCK_FIELDS] = []
-      @fields_hash[:KEY_STATISTICS] = []
-      @fields_hash[:COMPANY_EVENTS] = []
+      AVL_FIELDS.keys.each do |driver|
+        @fields_hash[driver] = []
+      end
+      
       @fields.each do |aField|
         if AVL_FIELDS[:YAHOO_STOCK_FIELDS].include? aField
           @fields_hash[:YAHOO_STOCK_FIELDS] << aField
-        elsif AVL_FIELDS[:KEY_STATISTICS].include? aField
-          @fields_hash[:KEY_STATISTICS] << aField
-        elsif AVL_FIELDS[:COMPANY_EVENTS].include? aField
-          @fields_hash[:COMPANY_EVENTS] << aField
+        else
+          DRIVERS.keys.each do |driver|
+            # puts "CHECKING DRIVER: #{driver} for field #{aField}"
+            if AVL_FIELDS[driver].include? aField
+              @fields_hash[driver] << aField
+            end
+          end
         end
       end
+      #
+      # @fields_hash[:YAHOO_STOCK_FIELDS] = []
+      # @fields_hash[:KEY_STATISTICS] = []
+      # @fields_hash[:COMPANY_EVENTS] = []
+      # @fields_hash[:ANALYST_OPINION] = []
+      # @fields.each do |aField|
+      #   if AVL_FIELDS[:YAHOO_STOCK_FIELDS].include? aField
+      #     @fields_hash[:YAHOO_STOCK_FIELDS] << aField
+      #   elsif AVL_FIELDS[:KEY_STATISTICS].include? aField
+      #     @fields_hash[:KEY_STATISTICS] << aField
+      #   elsif AVL_FIELDS[:COMPANY_EVENTS].include? aField
+      #     @fields_hash[:COMPANY_EVENTS] << aField
+      #   elsif AVL_FIELDS[:ANALYST_OPINION].include? aField
+      #     @fields_hash[:ANALYST_OPINION] << aField
+      #   end
+      # end
     end
   end
 end
