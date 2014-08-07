@@ -2,7 +2,7 @@
 
 YahooFinance is a gem that fetches stock quotes & key statistics from Yahoo (TM) API and financial HTML pages. This gem provides a 'unified' attribute based interface, and abstracts the source of the information, i.e. the user only needs to specify an attribute without the need to specify the page source of the attribute. This gem leverages to the highest extend possible the YahooStock (yahoo_stock_nas) gem for all the attributes provided by that gem, and fails over to HTML scraping when the data is unavailable there. Naturally, this has an implication on performance; YahooStock queries bundle 50 stocks in each query, whereas HTML scraping happens one page per stock at a time.
 
-#####This gem is currently still in development. HTML scraping now supports many attributes from Key Statistics and also supports earnings announcements from the Company Events page -- additional pages will be added as I find time.
+#####This gem is currently still in development. HTML scraping now supports many attributes from Key Statistics, supports earnings announcements from the Company Events page, and most attributes from Analyst Opinion -- additional pages will be added as I find time.
 
 #####Caveat: HTML parsing is susceptible to HTML encoding of Yahoo Finance pages; when these pages change, parsing will break. Core Yahoo API attributes from YahooStock will entirely depend on YahooStock continuing to support the Yahoo APIs.
 
@@ -27,6 +27,13 @@ Or install it yourself as:
 
 TODO: Write usage instructions here
 
+Example:
+	irb
+	require 'rubygems'
+	require 'yahoo_finance'
+	
+	stock = YahooFinance::Stock.new(['AAPL', 'YHOO'], [:market_cap, :bid, :brokers_count, :upgrades_downgrades_history])
+	stock.fetch
 <!-- ## Contributing
 
 1. Fork it

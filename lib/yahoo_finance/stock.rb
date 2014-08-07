@@ -110,6 +110,9 @@ module YahooFinance
     def initialize(symbols, fields = nil)
       @symbols = symbols
       @fields = []
+      fields.each do |aField|
+        add_field aField
+      end
     end
     
     def symbols
