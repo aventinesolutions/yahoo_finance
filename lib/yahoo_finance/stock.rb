@@ -110,8 +110,10 @@ module YahooFinance
     def initialize(symbols, fields = nil)
       @symbols = symbols
       @fields = []
-      fields.each do |aField|
-        add_field aField
+      if fields
+        fields.each do |aField|
+          add_field aField
+        end
       end
     end
     
@@ -225,22 +227,6 @@ module YahooFinance
           end
         end
       end
-      #
-      # @fields_hash[:YAHOO_STOCK_FIELDS] = []
-      # @fields_hash[:KEY_STATISTICS] = []
-      # @fields_hash[:COMPANY_EVENTS] = []
-      # @fields_hash[:ANALYST_OPINION] = []
-      # @fields.each do |aField|
-      #   if AVL_FIELDS[:YAHOO_STOCK_FIELDS].include? aField
-      #     @fields_hash[:YAHOO_STOCK_FIELDS] << aField
-      #   elsif AVL_FIELDS[:KEY_STATISTICS].include? aField
-      #     @fields_hash[:KEY_STATISTICS] << aField
-      #   elsif AVL_FIELDS[:COMPANY_EVENTS].include? aField
-      #     @fields_hash[:COMPANY_EVENTS] << aField
-      #   elsif AVL_FIELDS[:ANALYST_OPINION].include? aField
-      #     @fields_hash[:ANALYST_OPINION] << aField
-      #   end
-      # end
-    end
+   end
   end
 end

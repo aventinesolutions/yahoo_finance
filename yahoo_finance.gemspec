@@ -4,7 +4,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'yahoo_finance/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "yahoo_finance_stock"
+  spec.name          = "yahoo_finance_lib"
   spec.version       = YahooFinance::VERSION
   spec.authors       = ["Takis Mercouris"]
   spec.email         = ["tm@polymechanus.com"]
