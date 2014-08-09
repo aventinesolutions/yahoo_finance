@@ -1,4 +1,4 @@
-# YahooFinanceStock
+# YahooFinance library
 
 YahooFinance lib is a gem that fetches stock quotes, key statistics, company events, and analyst opinion from Yahoo (TM) API and financial HTML pages. The loading of stock quotes uses the excellent nas/yahoo_stock gem. This gem provides a 'unified' attribute based interface, and abstracts the source of the information, i.e. the user only needs to specify an attribute without the need to specify the page source of the attribute. This gem leverages to the highest extend possible the YahooStock (yahoo_stock_nas) gem for all the attributes provided by that gem, and fails over to HTML scraping when the data is unavailable there. Naturally, this has an implication on performance; YahooStock queries bundle 50 stocks in each query, whereas HTML scraping happens one page per stock at a time.
 
