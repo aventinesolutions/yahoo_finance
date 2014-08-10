@@ -3,6 +3,7 @@ require 'yahoo_stock'
 require 'yahoo_finance/key_statistics'
 require 'yahoo_finance/company_events'
 require 'yahoo_finance/analyst_opinion'
+require 'yahoo_finance/company_profile'
 
 
 module YahooFinance
@@ -10,12 +11,14 @@ module YahooFinance
     :YAHOO_STOCK_FIELDS => YahooStock::Quote.new(:stock_symbols => ['AAPL']).valid_parameters,
     :KEY_STATISTICS => YahooFinance::KeyStatistics.key_stats_available,
     :COMPANY_EVENTS => YahooFinance::CompanyEvents.key_events_available,
-    :ANALYST_OPINION => YahooFinance::AnalystOpinion.key_events_available
+    :ANALYST_OPINION => YahooFinance::AnalystOpinion.key_events_available,
+    :COMPANY_PROFILE => YahooFinance::CompanyProfile.key_events_available
   }
   DRIVERS = {
     :KEY_STATISTICS => YahooFinance::KeyStatistics::StatsPage,
     :COMPANY_EVENTS => YahooFinance::CompanyEvents::CompanyEventsPage,
-    :ANALYST_OPINION => YahooFinance::AnalystOpinion::AnalystOpinionPage
+    :ANALYST_OPINION => YahooFinance::AnalystOpinion::AnalystOpinionPage,
+    :COMPANY_PROFILE => YahooFinance::CompanyProfile::CompanyProfilePage
   }
   
   # We are not interested parsing every type of field

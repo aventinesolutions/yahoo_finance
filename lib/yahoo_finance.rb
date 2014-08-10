@@ -5,4 +5,5 @@ require 'yahoo_finance/stock'
 require 'yahoo_finance/key_statistics'
 require 'yahoo_finance/company_events'
 require 'yahoo_finance/analyst_opinion'
+require 'yahoo_finance/company_profile'
 
