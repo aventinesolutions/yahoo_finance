@@ -1,4 +1,4 @@
 $: << File.join(File.dirname(__FILE__), "/../lib") 
 
 require 'rspec'
-require 'yahoo_finance_stock'
+require 'yahoo_finance'
