@@ -25,7 +25,7 @@ Or install it yourself as:
 
 ## Usage
 
-Note that 
+ 
 
 Example:
 	irb
@@ -41,6 +41,15 @@ Example:
 	results = stock.fetch
 	aapl_bid = results["AAPL"][:bid]
 	yhoo_last = results["YHOO"][:last_trade_price_only]
+
+A simple interface using yahoo_stock to fetch history. It returns history as an array of hashes, e.g.
+	irb
+	require 'yahoo_finance'
+	require 'date'
+	
+	start_date = Date.today - 30
+	history = YahooFinance::StockHistory.new('AAPL', start_date)
+	history.fetch
 	
 !-- ## Contributing
 

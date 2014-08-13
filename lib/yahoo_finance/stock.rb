@@ -232,4 +232,23 @@ module YahooFinance
       end
    end
   end
+  
+  class StockHistory
+    
+    def initialize stock, start_date, end_date = nil
+      @stock = stock
+      @start_date = start_date
+      if end_date
+        @end_date = end_date
+      else
+        @end_date = Date.today - 1
+      end    
+    end
+    
+    def fetch
+      ys = YahooStock::History.new(:stock_symbol => @stock, :start_date => @start_date, :end_date => @end_date)
+      ys.results(:to_hash).output
+    end
+  end
+  
 end
