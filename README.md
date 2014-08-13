@@ -28,8 +28,9 @@ Or install it yourself as:
  
 
 Example:
+
+```ruby
 	irb
-	require 'rubygems'
 	require 'yahoo_finance'
 	
 	stock = YahooFinance::Stock.new(['AAPL', 'YHOO'], [:market_cap, :bid, :brokers_count, :upgrades_downgrades_history])
@@ -41,15 +42,19 @@ Example:
 	results = stock.fetch
 	aapl_bid = results["AAPL"][:bid]
 	yhoo_last = results["YHOO"][:last_trade_price_only]
+```
 
 A simple interface using yahoo_stock to fetch history. It returns history as an array of hashes, e.g.
+
+```ruby
 	irb
 	require 'yahoo_finance'
 	require 'date'
 	
 	start_date = Date.today - 30
-	history = YahooFinance::StockHistory.new('AAPL', start_date)
+	history = YahooFinance::StockHistory.new('AAPL', start_date) # when you don't specify end date, end date = today - 1
 	history.fetch
+```
 	
 !-- ## Contributing
 
