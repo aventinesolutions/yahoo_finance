@@ -72,6 +72,18 @@ module YahooFinance
       return dt if dt
     end
     
+    m=aField.match /^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[\s]+([\d]{1,2})\s*\-\s*(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[\s]+([\d]{1,2})\,[\s]*([\d]{4})/
+    if m && (m.size == 6)
+      # we found it, and it is a date range
+      dt1 = dt2 = nil
+      begin
+        dt1 = Date.strptime "#{m[1]} #{m[2]}, #{m[5]}", '%b %d, %Y'
+        dt1 = Date.strptime "#{m[3]} #{m[4]}, #{m[5]}", '%b %d, %Y'
+      rescue
+      end
+      return [dt1, dt2]
+    end
+    
     #else make an attempt to parse as date
     dt = nil
     begin
@@ -84,15 +96,17 @@ module YahooFinance
   end
   
   class Stock
-    @@available_fields = (AVL_FIELDS[:YAHOO_STOCK_FIELDS] + AVL_FIELDS[:KEY_STATISTICS] + AVL_FIELDS[:COMPANY_EVENTS] + AVL_FIELDS[:ANALYST_OPINION])
-    @@insert_variable_delays = true
-    @@insert_variable_delay = 4
+    attr_reader :results_hash, :print_progress
+    @@available_fields = (AVL_FIELDS[:YAHOO_STOCK_FIELDS] + AVL_FIELDS[:KEY_STATISTICS] + AVL_FIELDS[:COMPANY_EVENTS] + AVL_FIELDS[:ANALYST_OPINION] + AVL_FIELDS[:COMPANY_PROFILE])
+    @@insert_variable_delays = false
+    @@insert_variable_delay = 2
     @@retry_times = 3
     @@retry_variable_delay = 30
     @symbols = []
     @fields = []
     @fields_hash = {}
     @results_hash = {}
+    @print_progress = false
     
     def self.insert_variable_delays
       @@insert_variable_delays
@@ -188,13 +202,16 @@ module YahooFinance
       end
       # Then we fetch fields from KEY STATISTICS
       DRIVERS.keys.each do |driver|
-        # puts "CHECKING #{driver.to_s}"
         if @fields_hash[driver].size > 0
-          # puts "FETCHING FIELDS FOR #{driver.to_s}"
+          puts "FETCHING FIELDS FOR #{driver.to_s}" if @print_progress
+          stp = DRIVERS[driver].new # will overwrite symbol below
           @symbols.each do |aSymbol|
             tries = 0
+            now = Time.now
+            stp.symbol = aSymbol
+            puts "#{now.hour}:#{now.min}:#{now.sec}\tWorking on symbol #{aSymbol}" if @print_progress
             begin
-              stp = DRIVERS[driver].new(aSymbol)
+              # stp = DRIVERS[driver].new(aSymbol) # will overwrite symbol below
               stp.fetch
               @fields_hash[driver].each do |aField|
                 value = stp.value_for(aField) # this already parses the numbers
@@ -203,12 +220,17 @@ module YahooFinance
               sleep(Random.new(Random.new_seed).rand*@@insert_variable_delay)  if @@insert_variable_delays
             rescue
               tries += 1
-              sleep(@@retry_variable_delay)
-              retry if tries <= @@retry_times
+              puts "Exception: #{$!.inspect}  -- Retrying symbol #{aSymbol} time: #{tries.to_s}"
+              if tries <= @@retry_times
+                sleep(@@retry_variable_delay)
+                retry
+              end 
             end
           end
         end
+        puts "DONE witn #{driver.to_s}" if @print_progress
       end
+      # puts "RIGHT BEFORE I RETURN THE BIG HASH: #{@results_hash}"
       @results_hash
     end
         
@@ -230,7 +252,7 @@ module YahooFinance
           end
         end
       end
-   end
+    end
   end
   
   class StockHistory

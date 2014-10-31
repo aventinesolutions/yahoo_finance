@@ -1,3 +1,3 @@
 module YahooFinance
-  VERSION = "0.7.1"
+  VERSION = "0.7.6.2"
 end

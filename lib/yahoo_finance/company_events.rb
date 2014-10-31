@@ -11,9 +11,9 @@ module YahooFinance
     end
 
     class CompanyEventsPage
-      @symbol
+      attr_accessor :symbol
     
-      def initialize symbol
+      def initialize symbol=nil
         @symbol = symbol
       end
       

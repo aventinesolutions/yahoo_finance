@@ -75,11 +75,12 @@ module YahooFinance
     end
 
     class StatsPage
+      attr_accessor :symbol
       @page_keys = []
       @page_values = []
-      @symbol
+
     
-      def initialize symbol
+      def initialize symbol=nil
         @symbol = symbol
       end
       

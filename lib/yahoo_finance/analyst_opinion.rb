@@ -19,9 +19,9 @@ module YahooFinance
     end
 
     class AnalystOpinionPage
-      @symbol
+      attr_accessor :symbol
     
-      def initialize symbol
+      def initialize symbol=nil
         @symbol = symbol
       end
       
