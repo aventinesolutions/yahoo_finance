@@ -78,7 +78,7 @@ module YahooFinance
       dt1 = dt2 = nil
       begin
         dt1 = Date.strptime "#{m[1]} #{m[2]}, #{m[5]}", '%b %d, %Y'
-        dt1 = Date.strptime "#{m[3]} #{m[4]}, #{m[5]}", '%b %d, %Y'
+        dt2 = Date.strptime "#{m[3]} #{m[4]}, #{m[5]}", '%b %d, %Y'
       rescue
       end
       return [dt1, dt2]
@@ -93,6 +93,28 @@ module YahooFinance
     return dt if dt
     
     aField
+  end
+  
+  # this really parses numeric fields only
+  def YahooFinance.parse_financial_statement_field aField, multiplier = 1000
+    aField = aField.strip
+    
+    if aField.match /^([\d\,])*(\.[\d]+)*$/
+      # it's a number as far as we care; let's strip the commas....
+      return aField.tr('\,', '').to_f * multiplier
+    end
+    
+    # process the accounting negative field -- parentheses
+    m = aField.match /^\(([\d\,])*(\.[\d]+)*\)$/
+    if m
+      # it's a number as far as we care; let's strip the commas....
+      aField = aField.tr('\(\)\,', '')
+      return aField.to_f * multiplier * -1
+    end
+    
+    # anything else becomes zero by definition
+    return 0.0
+    
   end
   
   class Stock
