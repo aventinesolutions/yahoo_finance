@@ -3,8 +3,8 @@ require 'nokogiri'
 require 'date'
 
 module YahooFinance
-  module IncomeStatement
-    AVL_KEY_STATS = {
+  module FinancialStatement
+    INCOME_STMT_FIELDS = {
       :statement_periods => ['Period Ending', "Ending date per period"],
       :total_revenue => ['Total Revenue', "Total Revenue (per period)"],
       :cost_of_revenue => ['Cost of Revenue', 'Cost of Revenue (per period)'],
@@ -30,12 +30,18 @@ module YahooFinance
       :preferred_stock_and_other_adjustments => ['Preferred Stock And Other Adjustments', 'Preferred Stock And Other Adjustments (per period)'],
       :net_income_applicable_to_common_shares => ['Net Income Applicable To Common Shares', 'Net Income Applicable To Common Shares (per period)']
     }
-    def IncomeStatement.key_events_available 
-      return AVL_KEY_STATS.keys;
-    end
+    
+    BALANCE_SHEET_FIELDS = {
+      
+    }
+    
+    CASH_FLOW_STMT_FIELDS = {
+      
+    }
+    
 
     # Quarterly Data
-    class IncomeStatementPage
+    class FinancialStatementPage
       attr_accessor :symbol
     
       def initialize symbol=nil
@@ -43,8 +49,10 @@ module YahooFinance
         @term = :quarterly
         @periods = []
         @number_multiplier = 1000.00     # all numbers in the statements are in thousands... I need to verify whether I need to parse that
-        @income_statement = {}
+        @financial_statement = {}
         @data_columns = 4
+        @type="is"
+        @field_defs = YahooFinance::FinancialStatement::INCOME_STMT_FIELDS
       end
       
       def term= aValue
@@ -56,9 +64,13 @@ module YahooFinance
       def doc
         @doc
       end
+
+      def key_events_available 
+        return INCM_STMT_FIELDS.keys;
+      end
       
       def fetch
-        url = "http://finance.yahoo.com/q/is?s=#{@symbol}&#{@term.to_s}"
+        url = "http://finance.yahoo.com/q/#{@type}?s=#{@symbol}&#{@term.to_s}"
         open(url) do |stream|
           @doc = Nokogiri::HTML(stream)
         end
@@ -72,19 +84,19 @@ module YahooFinance
           period4 = Date.parse(row.children[4].text)
           @periods << period4
         end
-        @income_statement[:statement_periods] = @periods
+        @financial_statement[:statement_periods] = @periods
         
         # YahooFinance.parse_financial_statement_field field, multiplier
         # let's fetch everything here & store in the income statement
-        YahooFinance::IncomeStatement::AVL_KEY_STATS.keys.each do |incst_key|
+        @fields.keys.each do |incst_key|
           next if incst_key == :statement_periods
-          path_expr = "//td[text()[contains(., '" + YahooFinance::IncomeStatement::AVL_KEY_STATS[incst_key][0]  +"')]]"
+          path_expr = "//td[text()[contains(., '" + @fields[incst_key][0]  +"')]]"
           row = nil
           elem = @doc.xpath(path_expr)
           index = 1
           if elem && elem.size == 0
             # this is because we have a strong type; let's try again
-            path_expr = "//td/strong[text()[contains(., '" + YahooFinance::IncomeStatement::AVL_KEY_STATS[incst_key][0]  +"')]]"
+            path_expr = "//td/strong[text()[contains(., '" + @fields[incst_key][0]  +"')]]"
             elem = @doc.xpath(path_expr)
             if elem.size > 0
               row = elem[0].parent.parent
@@ -111,13 +123,13 @@ module YahooFinance
               rstbl << rs4
             end
             
-            @income_statement[incst_key] = rstbl
+            @financial_statement[incst_key] = rstbl
             # puts "\tPARSED #{incst_key}"
           else
             puts "\tNOT FOUND!!!! #{incst_key}"
           end
         end
-        @income_statement
+        @financial_statement
       end
       
       def statement_periods
@@ -126,18 +138,30 @@ module YahooFinance
        
       def value_for key_stat
         begin
-          return @income_statement[key_stat]
+          return @financial_statement[key_stat]
         rescue
         end
         return nil
       end  
     end
 
+    class QuarterlyIncomeStatementPage < IncomeStatementPage
+      def initialize symbol = nil
+        super symbol
+        @term = :quarterly
+        @data_columns = 4
+        @type="is"
+        @field_defs = YahooFinance::FinancialStatement::INCOME_STMT_FIELDS
+      end
+    end
+    
     class AnnualIncomeStatementPage < IncomeStatementPage
       def initialize symbol = nil
         super symbol
         @term = :annual
         @data_columns = 3
+        @type="is"
+        @field_defs = YahooFinance::FinancialStatement::INCOME_STMT_FIELDS
       end
     end
 

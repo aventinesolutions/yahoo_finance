@@ -96,8 +96,10 @@ module YahooFinance
   end
   
   # this really parses numeric fields only
-  def YahooFinance.parse_financial_statement_field aField, multiplier = 1000
+  def YahooFinance.parse_financial_statement_field aField, multiplier = 1000.0
     aField = aField.strip
+    
+    multiplier = 1000.00 if !multiplier   # just in case a nil is forced...
     
     if aField.match /^([\d\,])*(\.[\d]+)*$/
       # it's a number as far as we care; let's strip the commas....
@@ -109,7 +111,7 @@ module YahooFinance
     if m
       # it's a number as far as we care; let's strip the commas....
       aField = aField.tr('\(\)\,', '')
-      return aField.to_f * multiplier * -1
+      return aField.to_f * multiplier * -1.0
     end
     
     # anything else becomes zero by definition
