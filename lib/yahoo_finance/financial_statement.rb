@@ -121,20 +121,69 @@ module YahooFinance
       def fetch
         url = "http://finance.yahoo.com/q/#{@type}?s=#{@symbol}&#{@term.to_s}"
         doc = nil
-        open(url) do |stream|
-          doc = Nokogiri::HTML(stream)
+        tries = 0
+        begin
+          # SINCE YAHOO HAS SOME TIMES THE TENDENCY TO RETURN AN OOPS PAGE RATHER THAN A HTTP FAILURE
+          # WE ARE USING A TEST OF A HEADER FIELD AS A CONDITION OF A CORRECTLY FETCHED PAGE
+          fetched_ok = false
+          fetch_tries = 1
+          while (fetched_ok == false)  && (fetch_tries <= 3)
+            open(url) do |stream|
+              doc = Nokogiri::HTML(stream)
+            end
+            search_field = ((@type == "is") ? "Income Statement" : ((@type == "bs") ? "Balance Sheet" : "Cash Flow") )
+            fetched_test = doc.xpath("//b[text()[contains(., '" + search_field +"')]]")
+            if fetched_test && fetched_test.size > 0
+              # THERE IS STILL A CHANCE THAT YAHOO WILL NOT HAVE THE DATA FOR THIS STOCK, IN WHICH CASE, IT WILL DISPLAY
+              # a PAGE WITH A STATEMENT LIKE: 'There is no Income Statement data available for AMBR.' --- WE SEARCH FOR THAT AND RETURN NIL IF FOUND
+              nodata_path_search_expr = "//p[text()[contains(., 'There is no "+ search_field + " data available for #{symbol}.')]]"
+              no_statement = doc.xpath(nodata_path_search_expr)
+              # puts "EXPR: #{nodata_path_search_expr}    NO STATEMENT: #{no_statement} AND SIZE: #{no_statement.size}"
+              if (no_statement  && (no_statement.size > 0))
+                puts "WARNING: FOUND There is no #{search_field} data available for #{symbol}. -- RETURNING NIL"
+                return nil        # YAHOO DOESN'T HAVE THE DATA...
+              else
+                fetched_ok = true
+              end
+            else
+              puts "Fetching URL #{url} again - previous one failed. Trying #{fetch_tries} of 3"
+              sleep (1)
+              fetch_tries += 1
+            end
+          end
+        rescue
+          tries += 1
+          if fetch_tries <= 3
+            puts "Exception: #{$!.inspect}  -- Retrying symbol #{@symbol} time: #{fetch_tries.to_s} (total 3)"
+            sleep(2)
+            retry
+          end 
+          
         end
+        #
+        # %%% OK, WE MUST MAKE THIS MORE ROBUST TO HANDLE FEWER REPORTING PERIODS, e.g. ACT Actavis has 3 quarters reported
+        #
         # let's initialize periods: by finding 'Period Endinng
-        row = doc.xpath("//span[text() = 'Period Ending']")[0].parent.parent.parent
-        period1 = Date.parse(row.children[1].text)
-        period2 = Date.parse(row.children[2].text)
-        period3 = Date.parse(row.children[3].text)
-        @periods = [period1, period2, period3]
-        if @data_columns == 4       # quarterly data
-          period4 = Date.parse(row.children[4].text)
-          @periods << period4
+        got_periods = true
+        begin
+          row = doc.xpath("//span[text() = 'Period Ending']")[0].parent.parent.parent
+          period = []
+          1.upto(@data_columns) do |i|
+            begin
+              pd = Date.parse(row.children[i].text)
+              @periods << pd
+            rescue
+              break;    # end of the line here
+            end
+          end
+          @financial_statement[:statement_periods] = @periods
+        rescue
+          puts "Exception: #{$!.inspect}  -- Skipping symbol #{@symbol} URL: #{url}"
+          # puts "DOC: #{doc}"
+          got_periods = false
         end
-        @financial_statement[:statement_periods] = @periods
+        
+        return nil if !got_periods
         
         # YahooFinance.parse_financial_statement_field field, multiplier
         # let's fetch everything here & store in the income statement
@@ -183,17 +232,10 @@ module YahooFinance
             # puts "\tFOUND!!!! PATH EXPRESSION IS #{path_expr} "
             # puts "\t\tROW: #{row}"
             rstbl = []
-            field1 = row.children[index+1].text.tr('^[0-9\,\.\-\(\)]', '')
-            field2 = row.children[index+2].text.tr('^[0-9\,\.\-\(\)]', '')
-            field3 = row.children[index+3].text.tr('^[0-9\,\.\-\(\)]', '')
-            rs1 = YahooFinance.parse_financial_statement_field(field1, @number_multiplier)
-            rs2 = YahooFinance.parse_financial_statement_field(field2, @number_multiplier)
-            rs3 = YahooFinance.parse_financial_statement_field(field3, @number_multiplier)
-            rstbl = [ rs1, rs2, rs3]
-            if @data_columns == 4   # with quarterly data
-              field4 = row.children[index+4].text.tr('^[0-9\,\.\-\(\)]', '')
-              rs4 = YahooFinance.parse_financial_statement_field(field4, @number_multiplier)
-              rstbl << rs4
+            1.upto(@periods.size) do |i|
+              field = row.children[index+i].text.tr('^[0-9\,\.\-\(\)]', '')
+              rs = YahooFinance.parse_financial_statement_field(field, @number_multiplier)
+              rstbl << rs
             end
             
             @financial_statement[incst_key] = rstbl

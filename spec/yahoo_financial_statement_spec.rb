@@ -91,6 +91,24 @@ describe YahooFinance::FinancialStatement do
         end
       end
     end
+    it "should fetch all fields for e.g. ACT (3 quarters only on 11/19/14) quarterly Cash Flow statement and all values should be float (except for :statement_periods)-- valid values" do
+      is = YahooFinance::FinancialStatement::QuarterlyCashFlowStatementPage.new 'ACT'
+      rs = is.fetch
+      YahooFinance::FinancialStatement::CASH_FLOW_STMT_FIELDS.keys.each do |attr|
+        fields = rs[attr]
+        fields.class.name.should == "Array"
+        fields.size.should == 3
+        fields.each do |field|
+          attr == :statement_periods ? field.class.name.should == "Date" : field.class.name.should == "Float"
+        end
+      end
+    end
+    it "should return a nil hash if yahoo doesn't have the statement, e.g. for AMBR" do
+      is = YahooFinance::FinancialStatement::QuarterlyCashFlowStatementPage.new 'AMBR'
+      rs = is.fetch
+      rs.should == nil
+    end
+    
     #   pg = YahooFinance::CompanyEvents::CompanyEventsPage.new('AAPL')
     #   pg.fetch
     #   aapl_next_earnings_date = pg.value_for :next_earnings_announcement_date
