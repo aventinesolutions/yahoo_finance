@@ -10,7 +10,7 @@ module YahooFinance
       :trailing_pe => ['Trailing P\/E \(ttm\, intraday\)\:', "Trailing PE, trailing twelve months, intraday (based on price)"],
       :forward_pe => ['Forward P\/E ', "Forward P/E"],
       :peg_ratio => ['PEG Ratio ', "PEG Ratio (5 year expected (forward looking))"],
-      :price_to_sales_ttm => ['Price\/Sales  \(ttm\)\:', "Price/Sales, trailing 12 months"],
+      :price_to_sales_ttm => ['Price\/Sales \(ttm\)\:', "Price/Sales, trailing 12 months"],
       :price_to_book_mrq => ['Price\/Book \(mrq\):', "Price/Book, most recent quarter"],
       :roa_ttm => ['Return on Assets \(ttm\)\:', "Return on Assets, trailing twelve months"],
       :roe_ttm => ['Return on Equity \(ttm\)\:', "Return on Equity, trailing twelve months"],
