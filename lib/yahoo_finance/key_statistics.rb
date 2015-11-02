@@ -27,7 +27,6 @@ module YahooFinance
       :total_debt_mrq => ['Total Debt (mrq):', "Total Debt, most recent quarter"],
       :total_debt_to_equity_mrq => ['Total Debt/Equity \(mrq\)\:', "Total Debt/Equity (expressed as a percentage), most recent quarter", 0.01],
       :current_ratio_mrq => ['Current Ratio \(mrq\)\:', "Total Current Assets / Total Current Liabilities, most recent quarter"],
-      :book_value_per_share_mrq => ['Book Value Per Share \(mrq\)\:', "Total Common Equity / Total Common Shares Outstanding, most recent quarter"],
       # Trading additional info:
       :beta => ['Beta\:', "Equity monthly beta relative to S&P500. Uses 36 months when available."],
       # Share Statistics
